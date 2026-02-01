@@ -1,0 +1,12 @@
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  errors:
+    public_member_api_docs: ignore
+    deprecated_member_use: ignore
+    avoid_catches_without_on_clauses: ignore
+    use_build_context_synchronously: ignore
+
+linter:
+  rules:
+    public_member_api_docs: false
