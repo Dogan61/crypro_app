@@ -34,7 +34,6 @@ local.properties
 /build/
 /coverage/
 *.dill
-pubspec.lock
 
 # iOS
 **/ios/Flutter/.last_build_id
