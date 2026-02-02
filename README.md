@@ -91,6 +91,9 @@ You can showcase the UI directly in this README by adding images from `crypto_mo
 
 ### Watchlist
 ![Watchlist](crypto_mobil/screenshots/watchlist.png)
+
+### Profile
+![Profile](crypto_mobil/screenshots/profile.png)
 ```
 
 > Place your PNG files under `crypto_mobil/screenshots/` and adjust the file names as needed.
