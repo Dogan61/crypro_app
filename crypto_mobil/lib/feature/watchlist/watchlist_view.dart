@@ -1,16 +1,17 @@
+import 'package:crypto_mobil/core/constants/router_const.dart';
 import 'package:crypto_mobil/core/constants/text_const.dart';
-import 'package:crypto_mobil/core/constants/value_const.dart';
+import 'package:crypto_mobil/core/di/injection.dart';
 import 'package:crypto_mobil/core/navbar/custom_bottom_bar.dart';
 import 'package:crypto_mobil/feature/home/home_filter_mixin.dart';
 import 'package:crypto_mobil/feature/home/widgets/home_view_filter.dart';
+import 'package:crypto_mobil/feature/watchlist/bloc/watchlist_bloc.dart';
 import 'package:crypto_mobil/feature/watchlist/widgets/favorites_card.dart';
 import 'package:crypto_mobil/feature/watchlist/widgets/watch_list_app_bar.dart';
 import 'package:crypto_mobil/feature/watchlist/widgets/watch_list_summary.dart';
 import 'package:crypto_mobil/feature/watchlist/widgets/watch_list_title.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:crypto_mobil/core/di/injection.dart';
-import 'package:crypto_mobil/feature/watchlist/bloc/watchlist_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class WatchListView extends StatefulWidget {
   const WatchListView({super.key});
@@ -27,7 +28,6 @@ class _WatchListViewState extends State<WatchListView>
   void initState() {
     super.initState();
     _watchlistBloc = getIt<WatchlistBloc>()..add(const LoadWatchlist());
-    // Varsayılan olarak watchlist filtresi seçili gelsin
     selectedFilter = MarketFilter.watchlist;
   }
 
@@ -43,7 +43,8 @@ class _WatchListViewState extends State<WatchListView>
             builder: (context, state) {
               final isLoading = state.status == WatchlistStatus.loading;
               final hasError =
-                  state.status == WatchlistStatus.failure && state.symbols.isEmpty;
+                  state.status == WatchlistStatus.failure &&
+                  state.symbols.isEmpty;
 
               if (isLoading && state.symbols.isEmpty) {
                 return const Center(child: CircularProgressIndicator());
@@ -51,13 +52,15 @@ class _WatchListViewState extends State<WatchListView>
 
               if (hasError) {
                 return Center(
-                  child: Text(state.errorMessage ?? 'Watchlist yüklenemedi'),
+                  child: Text(
+                    state.errorMessage ?? TextConst.watchListNotLoaded,
+                  ),
                 );
               }
 
               return Column(
                 children: [
-                  WatchListSummary(
+                  const WatchListSummary(
                     title: TextConst.totalBalance,
                     balanceText: TextConst.watchlistBalance,
                     changeBadgeText: TextConst.priceChange24h,
@@ -66,10 +69,7 @@ class _WatchListViewState extends State<WatchListView>
                   const SizedBox(height: 16),
                   HomeViewFilter(
                     selected: selectedFilter,
-                    onChanged: (filter) {
-                      updateFilter(filter);
-                      // Filtre mantığı: MarketFilterMixin + state.symbols ileride
-                    },
+                    onChanged: updateFilter,
                   ),
                   const SizedBox(height: 16),
                   const WatchListTitle(
@@ -78,11 +78,11 @@ class _WatchListViewState extends State<WatchListView>
                   ),
                   Expanded(
                     child: state.symbols.isEmpty
-                        ? const Center(child: Text('Henüz favori eklenmemiş'))
+                        ? const Center(child: Text(TextConst.noFavorites))
                         : ListView.separated(
                             shrinkWrap: true,
                             itemCount: state.symbols.length,
-                            separatorBuilder: (_, __) =>
+                            separatorBuilder: (_, _) =>
                                 const SizedBox(height: 12),
                             itemBuilder: (context, index) {
                               final symbol = state.symbols[index];
@@ -93,8 +93,9 @@ class _WatchListViewState extends State<WatchListView>
                                   .where((t) => t.symbol == symbol)
                                   .firstOrNull;
 
-                              final priceText =
-                                  price != null ? '\$${price.formattedPrice}' : '-';
+                              final priceText = price != null
+                                  ? '\$${price.formattedPrice}'
+                                  : '-';
                               final changePercent =
                                   ticker?.priceChangePercent ?? 0.0;
                               final isPositive = changePercent >= 0;
@@ -106,6 +107,11 @@ class _WatchListViewState extends State<WatchListView>
                                 changeText:
                                     '${isPositive ? '+' : ''}${changePercent.toStringAsFixed(2)}%',
                                 isPositive: isPositive,
+                                onTap: () {
+                                  context.push(
+                                    RouterConst.coinDetailPath(symbol),
+                                  );
+                                },
                               );
                             },
                           ),

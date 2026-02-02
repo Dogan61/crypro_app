@@ -18,8 +18,8 @@ class HomeCoinCard extends StatelessWidget {
   final String symbol;
   final String price;
   final double priceChangePercent;
-   final bool isFavorite;
-   final VoidCallback? onFavoriteToggle;
+  final bool isFavorite;
+  final VoidCallback? onFavoriteToggle;
   final VoidCallback? onTap;
 
   @override
@@ -109,17 +109,20 @@ class HomeCoinCard extends StatelessWidget {
                                 FlSpot(2, 1.8),
                                 FlSpot(3, 1.4),
                                 FlSpot(4, 1.2),
-                                FlSpot(5, 1.0),
+                                FlSpot(5, 1),
                               ],
                         isCurved: true,
-                        color: isPositive ? Colors.greenAccent : Colors.redAccent,
+                        color: isPositive
+                            ? Colors.greenAccent
+                            : Colors.redAccent,
                         dotData: const FlDotData(show: false),
                         belowBarData: BarAreaData(
                           show: true,
-                          color: (isPositive
-                                  ? Colors.greenAccent
-                                  : Colors.redAccent)
-                              .withOpacity(0.2),
+                          color:
+                              (isPositive
+                                      ? Colors.greenAccent
+                                      : Colors.redAccent)
+                                  .withOpacity(0.2),
                         ),
                       ),
                     ],

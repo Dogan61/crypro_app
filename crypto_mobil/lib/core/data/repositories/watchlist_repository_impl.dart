@@ -46,8 +46,8 @@ class WatchlistRepositoryImpl implements WatchlistRepository {
     String symbol,
   ) async {
     try {
-      final current = await _localStorage.getStringList(_kWatchlistKey) ?? [];
-      current.remove(symbol);
+      final current = await _localStorage.getStringList(_kWatchlistKey) ?? []
+      ..remove(symbol);
       await _localStorage.saveStringList(_kWatchlistKey, current);
       return Right(current);
     } on CacheException catch (e) {
@@ -57,4 +57,3 @@ class WatchlistRepositoryImpl implements WatchlistRepository {
     }
   }
 }
-

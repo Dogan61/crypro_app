@@ -115,7 +115,9 @@ class CoinDetailBloc extends Bloc<CoinDetailEvent, CoinDetailState> {
     _priceSubscription = _subscribeToPricesUseCase([event.symbol]).listen((
       price,
     ) {
-      add(UpdateCoinPrice(price));
+      if (price.symbol == event.symbol) {
+        add(UpdateCoinPrice(price));
+      }
     });
   }
 

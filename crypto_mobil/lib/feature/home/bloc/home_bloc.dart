@@ -47,7 +47,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           errorMessage: failure.message,
         ),
       ),
-      (prices) {
+      (prices) async {
         tickersResult.fold(
           (failure) => emit(
             state.copyWith(
@@ -56,13 +56,20 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               errorMessage: 'Could not load ticker data',
             ),
           ),
-          (tickers) => emit(
-            state.copyWith(
-              status: HomeStatus.success,
-              prices: prices,
-              tickers: tickers,
-            ),
-          ),
+          (tickers) {
+            emit(
+              state.copyWith(
+                status: HomeStatus.success,
+                prices: prices,
+                tickers: tickers,
+              ),
+            );
+
+            final symbols = prices.map((p) => p.symbol).toList();
+            if (symbols.isNotEmpty) {
+              add(SubscribeToRealtimePrices(symbols));
+            }
+          },
         );
       },
     );
@@ -85,13 +92,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         tickersResult.fold(
           (failure) =>
               emit(state.copyWith(isRefreshing: false, prices: prices)),
-          (tickers) => emit(
-            state.copyWith(
-              isRefreshing: false,
-              prices: prices,
-              tickers: tickers,
-            ),
-          ),
+          (tickers) {
+            emit(
+              state.copyWith(
+                isRefreshing: false,
+                prices: prices,
+                tickers: tickers,
+              ),
+            );
+
+            final symbols = prices.map((p) => p.symbol).toList();
+            if (symbols.isNotEmpty) {
+              add(UnsubscribeFromRealtimePrices(symbols));
+              add(SubscribeToRealtimePrices(symbols));
+            }
+          },
         );
       },
     );

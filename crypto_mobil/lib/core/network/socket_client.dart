@@ -73,14 +73,14 @@ class SocketClient {
     }
 
     _logger.i('Subscribing to symbols: $symbols');
-    _socket!.emit('subscribe', symbols);
+    _socket!.emit('subscribe', {'symbols': symbols});
   }
 
   void unsubscribe(List<String> symbols) {
     if (!isConnected) return;
 
     _logger.i('Unsubscribing from symbols: $symbols');
-    _socket!.emit('unsubscribe', symbols);
+    _socket!.emit('unsubscribe', {'symbols': symbols});
   }
 
   void on(String event, void Function(dynamic) callback) {

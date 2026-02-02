@@ -43,27 +43,26 @@ class MarketRemoteDataSourceImpl implements MarketRemoteDataSource {
       StreamController<PriceModel>.broadcast();
 
   bool _socketInitialized = false;
+  final Set<String> _subscribedSymbols = <String>{};
 
   void _ensureSocketInitialized() {
     if (_socketInitialized) return;
     _socketInitialized = true;
-
-    // Connect and setup listeners after connection
     _socketClient.connect(
       onConnected: () {
-        _socketClient.on('subscribed', (data) {
-          // Handle subscription confirmation
-        });
+        if (_subscribedSymbols.isNotEmpty) {
+          _socketClient.subscribe(_subscribedSymbols.toList());
+        }
 
-        _socketClient.on('price_update', (data) {
+        _socketClient..on('subscribed', (data) {})
+
+        ..on('price_update', (data) {
           try {
             final priceModel = PriceModel.fromJson(
               data as Map<String, dynamic>,
             );
             _priceStreamController.add(priceModel);
-          } catch (e) {
-            // Log error
-          }
+          } catch (e) {}
         });
       },
     );
@@ -96,28 +95,17 @@ class MarketRemoteDataSourceImpl implements MarketRemoteDataSource {
 
   @override
   Future<List<PriceModel>> getPrices() async {
-    print('🔵 Fetching prices from: ${ApiConfig.marketPrices}');
-
     final response = await _dioClient.get<Map<String, dynamic>>(
       ApiConfig.marketPrices,
     );
 
-    print('🔵 Response received: ${response.keys}');
-
     final data = response['data'] as Map<String, dynamic>;
-    print('🔵 Data keys: ${data.keys}');
-    print('🔵 Data source: ${data['source']}');
-    print('🔵 Updated at: ${data['updatedAt']}');
 
     final prices = data['prices'] as List<dynamic>;
-    print('🔵 Total prices: ${prices.length}');
-    print('🔵 First 3 prices: ${prices.take(3)}');
 
     final priceModels = prices
         .map((json) => PriceModel.fromJson(json as Map<String, dynamic>))
         .toList();
-
-    print('🔵 Converted to models: ${priceModels.length}');
 
     return priceModels;
   }
@@ -153,8 +141,6 @@ class MarketRemoteDataSourceImpl implements MarketRemoteDataSource {
 
   @override
   Future<List<Ticker24hModel>> getTicker24h({List<String>? symbols}) async {
-    print('🟡 Fetching ticker24h for: ${symbols?.join(", ") ?? "all"}');
-
     final queryParams = <String, dynamic>{};
 
     if (symbols != null && symbols.isNotEmpty) {
@@ -166,21 +152,14 @@ class MarketRemoteDataSourceImpl implements MarketRemoteDataSource {
       queryParameters: queryParams.isNotEmpty ? queryParams : null,
     );
 
-    print('🟡 Ticker response keys: ${response.keys}');
-
     final data = response['data'] as Map<String, dynamic>;
     final tickers = data['tickers'] as List<dynamic>;
 
-    print('🟡 Total tickers: ${tickers.length}');
-    if (tickers.isNotEmpty) {
-      print('🟡 First ticker symbol: ${tickers.first['symbol']}');
-    }
+    if (tickers.isNotEmpty) {}
 
     final tickerModels = tickers
         .map((json) => Ticker24hModel.fromJson(json as Map<String, dynamic>))
         .toList();
-
-    print('🟡 Converted to ${tickerModels.length} ticker models');
 
     return tickerModels;
   }
@@ -189,18 +168,18 @@ class MarketRemoteDataSourceImpl implements MarketRemoteDataSource {
   Stream<PriceModel> subscribeToPriceUpdates(List<String> symbols) {
     _ensureSocketInitialized();
 
-    // Subscribe after connection is established
-    Future.delayed(const Duration(seconds: 1), () {
-      if (_socketClient.isConnected) {
-        _socketClient.subscribe(symbols);
-      }
-    });
+    _subscribedSymbols.addAll(symbols);
+
+    if (_socketClient.isConnected && _subscribedSymbols.isNotEmpty) {
+      _socketClient.subscribe(_subscribedSymbols.toList());
+    }
 
     return _priceStreamController.stream;
   }
 
   @override
   void unsubscribeFromPriceUpdates(List<String> symbols) {
+    _subscribedSymbols.removeAll(symbols);
     _socketClient.unsubscribe(symbols);
   }
 }

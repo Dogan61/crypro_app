@@ -77,8 +77,15 @@ const start = async () => {
   initSocketServer(httpServer);
 
   // Binance WebSocket stream
+  logger.info('WebSocket cache enabled', { enableWsCache: config.enableWsCache });
+  
   if (config.enableWsCache) {
     startPriceStream((snapshot) => {
+      logger.debug('Binance snapshot received', {
+        symbolCount: snapshot.prices.length,
+        source: snapshot.source,
+      });
+
       // Redis'e yaz
       setJson(config.priceCacheKey, snapshot, config.cacheTtlSeconds).catch(
         (err) => {
@@ -89,6 +96,8 @@ const start = async () => {
       // Socket.IO üzerinden client'lara push et
       broadcastAllPrices(snapshot);
     });
+  } else {
+    logger.warn('WebSocket cache is DISABLED - price updates will not be broadcasted!');
   }
 
   // HTTP server'ı başlat

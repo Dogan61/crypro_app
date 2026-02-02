@@ -1,10 +1,7 @@
 class TextConst {
   TextConst._();
 
-
   static const String appName = 'Crypto App';
-  static const String initialBalance = r'$64,230.50';
-  static const String priceChange = '+2.4%';
   static const String marketOverview = 'Market Overview';
   static const String assets = 'Assets';
   static const String charts = 'Charts';
@@ -18,15 +15,8 @@ class TextConst {
   static const String btcDominance = 'BTC Dominance 52%';
 
   // Coin detail
-  static const String coinDetailPrice = r'$42,350.00';
-  static const String coinDetailTime = 'Today, 10:32 AM';
   static const String marketStats = 'Market Stats';
   static const String marketCap = 'Market Cap';
-  static const String marketCapValue = r'$832.5B';
-  static const String marketCapChange = '+1.2%';
-
-  // Home overview
-  static const String overviewVolume = r'$1.2B';
 
   // Filters
   static const String filterAllAssets = 'All Assets';
@@ -81,4 +71,6 @@ class TextConst {
   static const String todayChange = r'+$984.50 today';
   static const String priceChange24h = '+2.4% (24h)';
   static const String watchlistPrice = r'$65,000.00';
+  static const String noFavorites = 'No favorites added yet';
+  static const String watchListNotLoaded = 'Watchlist not loaded';
 }

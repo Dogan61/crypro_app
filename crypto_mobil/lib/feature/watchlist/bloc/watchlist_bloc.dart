@@ -1,9 +1,9 @@
-import 'package:crypto_mobil/core/domain/usecases/get_watchlist_usecase.dart';
-import 'package:crypto_mobil/core/domain/usecases/get_prices_usecase.dart';
-import 'package:crypto_mobil/core/domain/usecases/get_ticker_24h_usecase.dart';
-import 'package:crypto_mobil/core/domain/usecases/toggle_watchlist_usecase.dart';
 import 'package:crypto_mobil/core/domain/entities/price_entity.dart';
 import 'package:crypto_mobil/core/domain/entities/ticker_24h_entity.dart';
+import 'package:crypto_mobil/core/domain/usecases/get_prices_usecase.dart';
+import 'package:crypto_mobil/core/domain/usecases/get_ticker_24h_usecase.dart';
+import 'package:crypto_mobil/core/domain/usecases/get_watchlist_usecase.dart';
+import 'package:crypto_mobil/core/domain/usecases/toggle_watchlist_usecase.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
@@ -85,8 +85,9 @@ class WatchlistBloc extends Bloc<WatchlistEvent, WatchlistState> {
                 state.copyWith(
                   status: WatchlistStatus.success,
                   symbols: symbols,
-                  prices:
-                      prices.where((p) => symbols.contains(p.symbol)).toList(),
+                  prices: prices
+                      .where((p) => symbols.contains(p.symbol))
+                      .toList(),
                   tickers: tickers,
                 ),
               ),
@@ -119,4 +120,3 @@ class WatchlistBloc extends Bloc<WatchlistEvent, WatchlistState> {
     );
   }
 }
-

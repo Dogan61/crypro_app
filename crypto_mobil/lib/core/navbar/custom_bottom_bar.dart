@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:crypto_mobil/core/constants/router_const.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -37,27 +38,27 @@ class _GlassBar extends StatelessWidget {
               _NavItem(
                 icon: Icons.bar_chart,
                 label: 'Market',
-                active: currentLocation == '/',
-                onTap: () => context.go('/'),
+                active: currentLocation == RouterConst.home,
+                onTap: () => context.go(RouterConst.home),
               ),
               _NavItem(
                 icon: Icons.account_balance_wallet,
                 label: 'Watchlist',
-                active: currentLocation == '/watchlist',
-                onTap: () => context.go('/watchlist'),
+                active: currentLocation == RouterConst.watchlist,
+                onTap: () => context.go(RouterConst.watchlist),
               ),
               const SizedBox(width: 48),
               _NavItem(
                 icon: Icons.search,
                 label: 'Search',
-                active: currentLocation == '/search',
-                onTap: () => context.go('/search'),
+                active: currentLocation == RouterConst.search,
+                onTap: () => context.go(RouterConst.search),
               ),
               _NavItem(
                 icon: Icons.settings,
                 label: 'Settings',
-                active: currentLocation == '/settings',
-                onTap: () => context.go('/settings'),
+                active: currentLocation == RouterConst.settings,
+                onTap: () => context.go(RouterConst.settings),
               ),
             ],
           ),

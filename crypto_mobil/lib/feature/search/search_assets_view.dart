@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:crypto_mobil/core/constants/router_const.dart';
 import 'package:crypto_mobil/core/di/injection.dart';
 import 'package:crypto_mobil/core/mixins/debounce_mixin.dart';
 import 'package:crypto_mobil/core/mixins/error_handler_mixin.dart';
@@ -116,7 +117,7 @@ class _SearchAssetsViewState extends State<SearchAssetsView>
                         subtitle: Text(symbol.symbol),
                         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                         onTap: () {
-                          context.push('/coin/${symbol.symbol}');
+                          context.push(RouterConst.coinDetailPath(symbol.symbol));
                         },
                       );
                     },

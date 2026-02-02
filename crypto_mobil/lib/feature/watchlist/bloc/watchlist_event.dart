@@ -19,4 +19,3 @@ class ToggleFavorite extends WatchlistEvent {
   @override
   List<Object?> get props => [symbol];
 }
-

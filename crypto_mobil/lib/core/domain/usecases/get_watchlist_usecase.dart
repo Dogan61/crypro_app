@@ -13,4 +13,3 @@ class GetWatchlistUseCase {
     return _repository.getWatchlist();
   }
 }
-

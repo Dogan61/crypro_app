@@ -64,7 +64,6 @@ mixin MarketFilterMixin<T extends StatefulWidget> on State<T> {
         });
 
       case MarketFilter.watchlist:
-        // TODO: Gerçek watchlist filtrelemesi local storage üzerinden eklenecek.
         return mutablePrices;
     }
   }

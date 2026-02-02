@@ -23,7 +23,8 @@ class WatchListSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final points = spots ??
+    final points =
+        spots ??
         const [
           FlSpot(0, 3),
           FlSpot(1, 1.5),
@@ -70,17 +71,16 @@ class WatchListSummary extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color:
-                            (isPositive ? Colors.green : Colors.red).withOpacity(
-                          0.4,
-                        ),
+                        color: (isPositive ? Colors.green : Colors.red)
+                            .withOpacity(0.4),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         changeBadgeText,
                         style: context.theme.textTheme.bodyMedium?.copyWith(
-                          color:
-                              isPositive ? Colors.greenAccent : Colors.redAccent,
+                          color: isPositive
+                              ? Colors.greenAccent
+                              : Colors.redAccent,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

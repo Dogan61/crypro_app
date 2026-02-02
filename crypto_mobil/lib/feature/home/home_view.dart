@@ -1,5 +1,5 @@
+import 'package:crypto_mobil/core/constants/router_const.dart';
 import 'package:crypto_mobil/core/di/injection.dart';
-import 'package:crypto_mobil/core/domain/entities/price_entity.dart';
 import 'package:crypto_mobil/core/domain/entities/ticker_24h_entity.dart';
 import 'package:crypto_mobil/core/mixins/error_handler_mixin.dart';
 import 'package:crypto_mobil/core/mixins/loading_mixin.dart';
@@ -81,9 +81,9 @@ class _HomeViewState extends State<HomeView>
               child: Column(
                 children: [
                   const Divider(thickness: 0.5, color: Colors.grey),
-                  const Padding(
-                    padding: EdgeInsets.all(16),
-                    child: OverviewCard(),
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: OverviewCard(tickers: state.tickers),
                   ),
                   const SizedBox(height: 16),
                   HomeViewFilter(
@@ -93,7 +93,7 @@ class _HomeViewState extends State<HomeView>
                   const SizedBox(height: 16),
                   const HomeHeaderText(),
                   const Divider(thickness: 0.5, color: Colors.grey),
-                  Expanded(child: _buildFilteredList(state)),
+                  Expanded(child: _buildFilteredList(context, state)),
                 ],
               ),
             );
@@ -104,14 +104,13 @@ class _HomeViewState extends State<HomeView>
     );
   }
 
-  Widget _buildFilteredList(HomeState state) {
+  Widget _buildFilteredList(BuildContext context, HomeState state) {
     if (state.prices.isEmpty) {
       return const Center(child: Text('No data available'));
     }
 
-    // Watchlist filtresi seçiliyse, öncelikle watchlist sembollerini uygula
     final watchlistState = context.watch<WatchlistBloc>().state;
-    List<PriceEntity> basePrices = state.prices;
+    var basePrices = state.prices;
 
     if (selectedFilter == MarketFilter.watchlist &&
         watchlistState.symbols.isNotEmpty) {
@@ -141,8 +140,7 @@ class _HomeViewState extends State<HomeView>
           ticker = null;
         }
 
-        final isFavorite =
-            watchlistState.symbols.contains(price.symbol);
+        final isFavorite = watchlistState.symbols.contains(price.symbol);
 
         return HomeCoinCard(
           symbol: price.symbol,
@@ -150,12 +148,10 @@ class _HomeViewState extends State<HomeView>
           priceChangePercent: ticker?.priceChangePercent ?? 0.0,
           isFavorite: isFavorite,
           onFavoriteToggle: () {
-            context
-                .read<WatchlistBloc>()
-                .add(ToggleFavorite(price.symbol));
+            context.read<WatchlistBloc>().add(ToggleFavorite(price.symbol));
           },
           onTap: () {
-            context.push('/coin/${price.symbol}');
+            context.push(RouterConst.coinDetailPath(price.symbol));
           },
         );
       },

@@ -36,4 +36,3 @@ class WatchlistState extends Equatable {
   @override
   List<Object?> get props => [status, symbols, prices, tickers, errorMessage];
 }
-

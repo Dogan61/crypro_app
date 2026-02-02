@@ -30,40 +30,85 @@ const initSocketServer = (httpServer) => {
 
     // Client'ın abone olmak istediği sembolleri kaydet
     socket.on('subscribe', (symbols) => {
-      if (!Array.isArray(symbols)) {
-        socket.emit('error', { message: 'Symbols must be an array' });
+      logger.info('WS subscribe received', {
+        socketId: socket.id,
+        rawType: typeof symbols,
+        isArray: Array.isArray(symbols),
+        payloadPreview: symbols,
+      });
+
+      let normalizedSymbols = symbols;
+
+      // Bazı client'lar tek string veya { symbols: [...] } gönderebilir
+      if (typeof normalizedSymbols === 'string') {
+        normalizedSymbols = [normalizedSymbols];
+      } else if (
+        normalizedSymbols &&
+        typeof normalizedSymbols === 'object' &&
+        Array.isArray(normalizedSymbols.symbols)
+      ) {
+        normalizedSymbols = normalizedSymbols.symbols;
+      }
+
+      if (!Array.isArray(normalizedSymbols)) {
+        socket.emit('error', { message: 'Symbols must be an array or string' });
         return;
       }
 
-      symbols.forEach((symbol) => {
+      normalizedSymbols.forEach((symbol) => {
         socket.join(`price:${symbol.toUpperCase()}`);
       });
 
       logger.info('Client subscribed', {
         socketId: socket.id,
-        symbols,
+        symbols: normalizedSymbols,
       });
 
-      socket.emit('subscribed', { symbols, count: symbols.length });
+      socket.emit('subscribed', {
+        symbols: normalizedSymbols,
+        count: normalizedSymbols.length,
+      });
     });
 
     // Abonelikten çık
     socket.on('unsubscribe', (symbols) => {
-      if (!Array.isArray(symbols)) {
-        socket.emit('error', { message: 'Symbols must be an array' });
+      logger.info('WS unsubscribe received', {
+        socketId: socket.id,
+        rawType: typeof symbols,
+        isArray: Array.isArray(symbols),
+        payloadPreview: symbols,
+      });
+
+      let normalizedSymbols = symbols;
+
+      if (typeof normalizedSymbols === 'string') {
+        normalizedSymbols = [normalizedSymbols];
+      } else if (
+        normalizedSymbols &&
+        typeof normalizedSymbols === 'object' &&
+        Array.isArray(normalizedSymbols.symbols)
+      ) {
+        normalizedSymbols = normalizedSymbols.symbols;
+      }
+
+      if (!Array.isArray(normalizedSymbols)) {
+        socket.emit('error', { message: 'Symbols must be an array or string' });
         return;
       }
 
-      symbols.forEach((symbol) => {
+      normalizedSymbols.forEach((symbol) => {
         socket.leave(`price:${symbol.toUpperCase()}`);
       });
 
       logger.info('Client unsubscribed', {
         socketId: socket.id,
-        symbols,
+        symbols: normalizedSymbols,
       });
 
-      socket.emit('unsubscribed', { symbols, count: symbols.length });
+      socket.emit('unsubscribed', {
+        symbols: normalizedSymbols,
+        count: normalizedSymbols.length,
+      });
     });
 
     // Ping-pong for connection health
@@ -99,10 +144,19 @@ const broadcastPriceUpdate = (symbol, priceData) => {
   if (!io) return;
 
   const room = `price:${symbol.toUpperCase()}`;
-  io.to(room).emit('price_update', {
+  const payload = {
     symbol,
     ...priceData,
     timestamp: Date.now(),
+  };
+  
+  io.to(room).emit('price_update', payload);
+  
+  logger.debug('Broadcasted price_update', {
+    symbol,
+    room,
+    price: priceData.price,
+    roomSize: io.sockets.adapter.rooms.get(room)?.size || 0,
   });
 };
 
@@ -111,7 +165,10 @@ const broadcastPriceUpdate = (symbol, priceData) => {
  * OPTIMIZE: Sadece subscribed room'lara gönderir, tüm client'lara spam yapmaz
  */
 const broadcastAllPrices = (pricesSnapshot) => {
-  if (!io) return;
+  if (!io) {
+    logger.warn('Socket.IO not initialized, cannot broadcast prices');
+    return;
+  }
 
   let broadcasted = 0;
   let skipped = 0;
@@ -134,11 +191,12 @@ const broadcastAllPrices = (pricesSnapshot) => {
     }
   });
 
-  logger.debug('Broadcast prices (room-optimized)', {
+  logger.info('Broadcast prices (room-optimized)', {
     total: pricesSnapshot.prices.length,
     broadcasted,
     skipped,
     source: pricesSnapshot.source,
+    connectedClients: connectedClients,
   });
 };
 
