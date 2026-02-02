@@ -75,25 +75,27 @@ For local development with an iOS simulator, `API_BASE_URL` = `http://localhost:
 
 ## Screenshots
 
-You can showcase the UI directly in this README by adding images from `crypto_mobil` (for example):
-
-```md
-## Screenshots
-
-### Home
-![Home](crypto_mobil/screenshots/home.png)
-
-### Coin Detail
-![Coin Detail](crypto_mobil/screenshots/coin_detail.png)
-
-### Search
-![Search](crypto_mobil/screenshots/search.png)
-
-### Watchlist
-![Watchlist](crypto_mobil/screenshots/watchlist.png)
-
-### Profile
-![Profile](crypto_mobil/screenshots/profile.png)
-```
-
-> Place your PNG files under `crypto_mobil/screenshots/` and adjust the file names as needed.
+<table>
+  <tr>
+    <td align="center" width="20%">
+      <img src="crypto_mobil/screenshots/home.png" alt="Home" width="200"/><br/>
+      <strong>Home</strong>
+    </td>
+    <td align="center" width="20%">
+      <img src="crypto_mobil/screenshots/coin_detail.png" alt="Coin Detail" width="200"/><br/>
+      <strong>Coin Detail</strong>
+    </td>
+    <td align="center" width="20%">
+      <img src="crypto_mobil/screenshots/search.png" alt="Search" width="200"/><br/>
+      <strong>Search</strong>
+    </td>
+    <td align="center" width="20%">
+      <img src="crypto_mobil/screenshots/watchlist.png" alt="Watchlist" width="200"/><br/>
+      <strong>Watchlist</strong>
+    </td>
+    <td align="center" width="20%">
+      <img src="crypto_mobil/screenshots/profile.png" alt="Profile" width="200"/><br/>
+      <strong>Profile</strong>
+    </td>
+  </tr>
+</table>
