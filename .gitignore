@@ -88,3 +88,6 @@ app.*.map.json
 .env
 .env.*
 *.env
+
+# Backend (Node.js)
+crypto_backend/node_modules/
