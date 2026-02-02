@@ -1,0 +1,63 @@
+name: crypto_mobil
+description: "Crypto mobil uygulama - Flutter."
+
+publish_to: "none"
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # UI
+  fl_chart: ^1.1.1
+  cupertino_icons: ^1.0.8
+  
+  # State Management
+  flutter_bloc: ^8.1.6
+  equatable: ^2.0.5
+  
+  # Navigation
+  go_router: ^14.2.7
+  
+  # Network
+  dio: ^5.7.0
+  socket_io_client: ^2.0.3+1
+  
+  # Serialization
+  json_annotation: ^4.9.0
+  
+  # Dependency Injection
+  get_it: ^8.0.2
+  injectable: ^2.5.0
+  
+  # Local Storage
+  shared_preferences: ^2.3.2
+  flutter_secure_storage: ^9.2.2
+  
+  # Environment Variables
+  envied: ^0.5.4+1
+  
+  # Utils
+  logger: ^2.4.0
+  intl: ^0.19.0
+  dartz: ^0.10.1
+  cached_network_image: ^3.4.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  very_good_analysis: ^8.0.0
+  flutter_lints: ^6.0.0
+  
+  # Code Generation
+  build_runner: ^2.4.13
+  json_serializable: ^6.8.0
+  injectable_generator: ^2.6.2
+  envied_generator: ^0.5.4+1
+
+flutter:
+  uses-material-design: true

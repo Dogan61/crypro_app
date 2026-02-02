@@ -1,16 +1,40 @@
-# crypto_app
+# Crypto Projesi
 
-A new Flutter project.
+Monorepo: mobil uygulama (Flutter) ve backend API (Node.js).
 
-## Getting Started
+## Yapı
 
-This project is a starting point for a Flutter application.
+```
+crypto_app/
+├── crypto_mobil/    # Flutter mobil uygulama
+└── crypto_backend/  # Node.js + Express API
+```
 
-A few resources to get you started if this is your first Flutter project:
+## crypto_mobil (Flutter)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Mobil uygulama — Home, Coin detay, Arama, Watchlist, Ayarlar.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+cd crypto_mobil
+flutter pub get
+flutter run
+```
+
+## crypto_backend (Node.js)
+
+REST API — coin listesi, detay, ileride auth vb.
+
+```bash
+cd crypto_backend
+npm install
+npm run dev
+```
+
+Varsayılan port: **3000**. Endpoint'ler: `/health`, `/api/coins`, `/api/coins/:id`.
+
+## Geliştirme
+
+- **Mobil:** `crypto_mobil` içinde Flutter komutları kullanın.
+- **Backend:** `crypto_backend` içinde `npm run dev` ile watch modunda çalıştırın.
+
+Git init yapıldıysa tüm proje tek repo altında; isterseniz `crypto_mobil` ve `crypto_backend` ayrı repolara da bölünebilir.
