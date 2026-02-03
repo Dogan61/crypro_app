@@ -1,3 +1,4 @@
+import 'package:crypto_mobil/core/data/datasources/market_cache_datasource.dart';
 import 'package:crypto_mobil/core/data/datasources/market_remote_datasource.dart';
 import 'package:crypto_mobil/core/domain/entities/kline_entity.dart';
 import 'package:crypto_mobil/core/domain/entities/price_entity.dart';
@@ -11,8 +12,9 @@ import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: MarketRepository)
 class MarketRepositoryImpl implements MarketRepository {
-  MarketRepositoryImpl(this._remoteDataSource);
+  MarketRepositoryImpl(this._remoteDataSource, this._cacheDataSource);
   final MarketRemoteDataSource _remoteDataSource;
+  final MarketCacheDataSource _cacheDataSource;
 
   @override
   Future<Either<Failure, List<SymbolEntity>>> getSymbols({
@@ -44,10 +46,17 @@ class MarketRepositoryImpl implements MarketRepository {
   Future<Either<Failure, List<PriceEntity>>> getPrices() async {
     try {
       final prices = await _remoteDataSource.getPrices();
+      // Cache successful response
+      await _cacheDataSource.cachePrices(prices);
       return Right(prices);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } on NetworkException catch (e) {
+      // Try to get from cache when offline
+      final cachedPrices = await _cacheDataSource.getCachedPrices();
+      if (cachedPrices != null && cachedPrices.isNotEmpty) {
+        return Right(cachedPrices);
+      }
       return Left(NetworkFailure(e.message));
     } on RateLimitException catch (e) {
       return Left(RateLimitFailure(e.message, e.retryAfter));
@@ -106,10 +115,17 @@ class MarketRepositoryImpl implements MarketRepository {
   }) async {
     try {
       final tickers = await _remoteDataSource.getTicker24h(symbols: symbols);
+      // Cache successful response
+      await _cacheDataSource.cacheTickers24h(tickers);
       return Right(tickers);
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message));
     } on NetworkException catch (e) {
+      // Try to get from cache when offline
+      final cachedTickers = await _cacheDataSource.getCachedTickers24h();
+      if (cachedTickers != null && cachedTickers.isNotEmpty) {
+        return Right(cachedTickers);
+      }
       return Left(NetworkFailure(e.message));
     } on RateLimitException catch (e) {
       return Left(RateLimitFailure(e.message, e.retryAfter));

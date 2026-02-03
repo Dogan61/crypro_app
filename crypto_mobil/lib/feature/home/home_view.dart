@@ -1,6 +1,7 @@
 import 'package:crypto_mobil/core/constants/router_const.dart';
 import 'package:crypto_mobil/core/di/injection.dart';
 import 'package:crypto_mobil/core/domain/entities/ticker_24h_entity.dart';
+import 'package:crypto_mobil/core/mixins/connectivity_mixin.dart';
 import 'package:crypto_mobil/core/mixins/error_handler_mixin.dart';
 import 'package:crypto_mobil/core/mixins/loading_mixin.dart';
 import 'package:crypto_mobil/core/navbar/custom_bottom_bar.dart';
@@ -23,7 +24,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView>
-    with LoadingMixin, ErrorHandlerMixin, MarketFilterMixin<HomeView> {
+    with LoadingMixin, ErrorHandlerMixin, MarketFilterMixin<HomeView>, ConnectivityMixin<HomeView> {
   late final HomeBloc _homeBloc;
   late final WatchlistBloc _watchlistBloc;
 
@@ -51,7 +52,11 @@ class _HomeViewState extends State<HomeView>
       ],
       child: Scaffold(
         appBar: const CustomAppBar(),
-        body: BlocConsumer<HomeBloc, HomeState>(
+        body: Column(
+          children: [
+            buildOfflineIndicator(),
+            Expanded(
+              child: BlocConsumer<HomeBloc, HomeState>(
           listener: (context, state) {
             if (state.status == HomeStatus.failure) {
               showErrorSnackBar(
@@ -98,6 +103,9 @@ class _HomeViewState extends State<HomeView>
               ),
             );
           },
+              ),
+            ),
+          ],
         ),
         bottomNavigationBar: const CustomBottomBar(),
       ),
