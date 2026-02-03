@@ -1,10 +1,47 @@
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 
 /// Mixin for handling connectivity/network state
 mixin ConnectivityMixin<T extends StatefulWidget> on State<T> {
   bool _isOnline = true;
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
+  final Connectivity _connectivity = Connectivity();
 
   bool get isOnline => _isOnline;
+
+  @override
+  void initState() {
+    super.initState();
+    _initConnectivity();
+  }
+
+  Future<void> _initConnectivity() async {
+    // Check initial connectivity status
+    final result = await _connectivity.checkConnectivity();
+    _updateConnectionStatus(result);
+
+    // Listen to connectivity changes
+    _connectivitySubscription = _connectivity.onConnectivityChanged.listen(
+      _updateConnectionStatus,
+    );
+  }
+
+  void _updateConnectionStatus(List<ConnectivityResult> results) {
+    final isConnected = !results.contains(ConnectivityResult.none);
+    
+    if (mounted) {
+      setState(() {
+        _isOnline = isConnected;
+      });
+
+      // Show snackbar when going offline
+      if (!isConnected) {
+        showNoConnectionSnackBar(context);
+      }
+    }
+  }
 
   void setOnlineStatus(bool status) {
     if (mounted) {
@@ -47,5 +84,11 @@ mixin ConnectivityMixin<T extends StatefulWidget> on State<T> {
         duration: Duration(seconds: 3),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription?.cancel();
+    super.dispose();
   }
 }
