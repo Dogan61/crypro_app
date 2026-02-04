@@ -62,8 +62,15 @@ class MarketCacheDataSourceImpl implements MarketCacheDataSource {
 
       final jsonList = jsonDecode(jsonString) as List<dynamic>;
       return jsonList
-          .map((json) => PriceModel.fromJson(json as Map<String, dynamic>))
-          .map((model) => model.toEntity())
+          .map(
+            (json) => PriceModel.fromJson(json as Map<String, dynamic>),
+          )
+          .map(
+            (model) => PriceEntity(
+              symbol: model.symbol,
+              price: model.price,
+            ),
+          )
           .toList();
     } catch (e) {
       throw CacheException('Failed to get cached prices: $e');
@@ -109,8 +116,32 @@ class MarketCacheDataSourceImpl implements MarketCacheDataSource {
 
       final jsonList = jsonDecode(jsonString) as List<dynamic>;
       return jsonList
-          .map((json) => Ticker24hModel.fromJson(json as Map<String, dynamic>))
-          .map((model) => model.toEntity())
+          .map(
+            (json) => Ticker24hModel.fromJson(json as Map<String, dynamic>),
+          )
+          .map(
+            (model) => Ticker24hEntity(
+              symbol: model.symbol,
+              priceChange: model.priceChange,
+              priceChangePercent: model.priceChangePercent,
+              weightedAvgPrice: model.weightedAvgPrice,
+              prevClosePrice: model.prevClosePrice,
+              lastPrice: model.lastPrice,
+              lastQty: model.lastQty,
+              bidPrice: model.bidPrice,
+              askPrice: model.askPrice,
+              openPrice: model.openPrice,
+              highPrice: model.highPrice,
+              lowPrice: model.lowPrice,
+              volume: model.volume,
+              quoteVolume: model.quoteVolume,
+              openTime: model.openTime,
+              closeTime: model.closeTime,
+              firstId: model.firstId,
+              lastId: model.lastId,
+              count: model.count,
+            ),
+          )
           .toList();
     } catch (e) {
       throw CacheException('Failed to get cached tickers: $e');

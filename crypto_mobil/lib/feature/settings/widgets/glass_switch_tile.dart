@@ -56,7 +56,7 @@ class _GlassSwitchTileState extends State<GlassSwitchTile> {
                     ),
                   ),
                 ),
-                Switch(
+                Switch.adaptive(
                   value: value,
                   activeColor: AppColors.primary,
                   onChanged: (v) => setState(() => value = v),
